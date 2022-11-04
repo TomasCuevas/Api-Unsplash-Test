@@ -14,11 +14,13 @@ interface Return {
 export const useCalcColumns = ({ columnsProps, elements }: Props): Return => {
   const [columns, setColumns] = useState<any[][]>([]);
   const [previousElements, setPreviousElements] = useState<[][]>([]);
+  const [innerWidth, setInnerWidth] = useState<number>(0);
 
   const calColumns = (
-    columnsProps: { min_width: number; columnsNumber: number }[]
+    columnsProps: { min_width: number; columnsNumber: number }[],
+    reCalc = false
   ): void => {
-    if (previousElements === elements) return;
+    if (previousElements === elements && !reCalc) return;
     let column: number = 0;
 
     columnsProps.forEach(({ min_width, columnsNumber }, index) => {
@@ -67,12 +69,16 @@ export const useCalcColumns = ({ columnsProps, elements }: Props): Return => {
       calColumns(columnsProps);
     }
 
-    const listener = window.addEventListener("resize", () =>
-      calColumns(columnsProps)
-    );
+    const listener = window.addEventListener("resize", () => {
+      setInnerWidth(window.innerWidth);
+    });
 
     return () => removeEventListener("resize", () => listener);
   }, [elements]);
+
+  useEffect(() => {
+    calColumns(columnsProps, true);
+  }, [innerWidth]);
 
   return {
     // properties
