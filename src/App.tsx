@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
+import useSWRInmutable from "swr/immutable";
+
+//* interface *//
 import { IPhotos } from "../intefaces/photos";
 
 export const App = () => {
   const [photos, setPhotos] = useState<IPhotos[]>([]);
-  const [pageIndex, setPageIndex] = useState(1);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+
+  const { data, error } = useSWRInmutable(
+    `${import.meta.env.VITE_BASEURL_API}/photos?client_id=${
+      import.meta.env.VITE_UNSPLASH_ACCESS_KEY
+    }&page=${pageIndex}`
+  );
 
   const getPhotos = async () => {
-    const data = await fetch(
-      `${import.meta.env.VITE_BASEURL_API}/photos?client_id=${
-        import.meta.env.VITE_UNSPLASH_ACCESS_KEY
-      }&page=${pageIndex}`
-    );
-
-    const photos: IPhotos[] = await data.json();
+    if (isLoading) return;
+    setIsLoading(true);
     setPageIndex((prev) => prev + 1);
-    setPhotos((prev) => [...prev, ...photos]);
   };
 
   useEffect(() => {
-    getPhotos();
-  }, []);
+    if (data && !error) {
+      setPhotos((prev) => [...prev, ...data]);
+      setIsLoading(false);
+    }
+  }, [data]);
 
   return (
     <>
