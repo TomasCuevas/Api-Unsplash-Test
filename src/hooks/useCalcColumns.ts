@@ -13,12 +13,12 @@ interface Return {
 
 export const useCalcColumns = ({ columnsProps, elements }: Props): Return => {
   const [columns, setColumns] = useState<any[][]>([]);
-  const [first, setFirst] = useState(true);
   const [previousElements, setPreviousElements] = useState<[][]>([]);
 
   const calColumns = (
     columnsProps: { min_width: number; columnsNumber: number }[]
   ): void => {
+    if (previousElements === elements) return;
     let column: number = 0;
 
     columnsProps.forEach(({ min_width, columnsNumber }, index) => {
@@ -59,17 +59,11 @@ export const useCalcColumns = ({ columnsProps, elements }: Props): Return => {
     }
 
     setColumns(newColumns);
+    setPreviousElements(elements);
   };
 
   useEffect(() => {
-    if (first && elements?.length > 0) {
-      setPreviousElements(elements);
-      setFirst(false);
-      calColumns(columnsProps);
-    }
-
-    if (!first && elements !== previousElements) {
-      setPreviousElements(elements);
+    if (elements?.length > 0) {
       calColumns(columnsProps);
     }
 
