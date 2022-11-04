@@ -39,20 +39,10 @@ export const App = () => {
   }, [data]);
 
   return (
-    <>
-      <section className="mx-auto mb-10 grid w-full max-w-[900px] grid-cols-1 gap-3 px-[5%] py-6 sm:grid-cols-2 lg:max-w-[1500px] lg:grid-cols-3">
-        {columns.map((column, index) => (
-          <FeedColumn photos={column} key={index} />
-        ))}
-      </section>
-      <div
-        onClick={getPhotos}
-        className="my-4 flex cursor-pointer items-center justify-center"
-      >
-        <span className="rounded-lg bg-amber-400 px-5 py-2 text-3xl font-bold text-white">
-          Cargar mas
-        </span>
-      </div>
-    </>
+    <section className="mx-auto mb-10 grid w-full max-w-[900px] grid-cols-1 gap-3 px-[5%] py-6 sm:grid-cols-2 lg:max-w-[1500px] lg:grid-cols-3">
+      {columns.map((column, index) => (
+        <FeedColumn photos={column} key={index} getNextPage={getPhotos} />
+      ))}
+    </section>
   );
 };
