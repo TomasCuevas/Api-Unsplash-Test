@@ -2,12 +2,22 @@ import { useEffect, useState } from "react";
 import useSWRInmutable from "swr/immutable";
 
 //* interface *//
-import { IPhotos } from "../intefaces/photos";
+import { IPhotos } from "./intefaces/photos";
+import { useCalcColumns } from "./hooks/useCalcColumns";
+import { FeedColumn } from "./components/FeedColumns";
 
 export const App = () => {
   const [photos, setPhotos] = useState<IPhotos[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pageIndex, setPageIndex] = useState<number>(1);
+  const { columns } = useCalcColumns({
+    columnsProps: [
+      { columnsNumber: 1, min_width: 0 },
+      { columnsNumber: 2, min_width: 640 },
+      { columnsNumber: 3, min_width: 1024 },
+    ],
+    elements: photos,
+  });
 
   const { data, error } = useSWRInmutable(
     `${import.meta.env.VITE_BASEURL_API}/photos?client_id=${
@@ -30,14 +40,9 @@ export const App = () => {
 
   return (
     <>
-      <section className="mx-auto mt-2 flex w-11/12 flex-wrap justify-center gap-2">
-        {photos.map(({ urls: { regular }, id }) => (
-          <img
-            src={regular}
-            alt="image"
-            key={id}
-            className="h-[300px] w-[300px] object-cover"
-          />
+      <section className="mx-auto mb-10 grid w-full max-w-[900px] grid-cols-1 gap-3 px-[5%] py-6 sm:grid-cols-2 lg:max-w-[1500px] lg:grid-cols-3">
+        {columns.map((column, index) => (
+          <FeedColumn photos={column} key={index} />
         ))}
       </section>
       <div
