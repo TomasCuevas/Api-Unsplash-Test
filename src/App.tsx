@@ -12,7 +12,7 @@ export const App = () => {
   const { data, error } = useSWRInmutable(
     `${import.meta.env.VITE_BASEURL_API}/photos?client_id=${
       import.meta.env.VITE_UNSPLASH_ACCESS_KEY
-    }&page=${pageIndex}`
+    }&page=${pageIndex}&per_page=30`
   );
 
   const getPhotos = async () => {
